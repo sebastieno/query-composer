@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp", "sample\SampleApp.csproj", "{1F416726-48F1-4F4C-8D2F-EAF0C718944A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNetMvc.Helpers", "AspNetMvc.Helpers", "{A75EA95A-5A31-477A-AA9A-CA8A00170976}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "knockoutjs", "knockoutjs", "{0D6FA399-681C-4A16-B875-E044BA839FC1}"
+	ProjectSection(SolutionItems) = preProject
+		knockoutjs\_querycomposer_kotemplate.html = knockoutjs\_querycomposer_kotemplate.html
+		knockoutjs\query-composer.js = knockoutjs\query-composer.js
+		knockoutjs\query-composer.js.map = knockoutjs\query-composer.js.map
+		knockoutjs\query-composer.ts = knockoutjs\query-composer.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{928DDBF7-C8E8-4BC2-B194-3B309FE708E9}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryComposer.MvcHelper", "aspnetmvc.helpers\QueryComposer.MvcHelper.csproj", "{D11FE351-4DF2-4819-818D-651372A489DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F416726-48F1-4F4C-8D2F-EAF0C718944A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F416726-48F1-4F4C-8D2F-EAF0C718944A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F416726-48F1-4F4C-8D2F-EAF0C718944A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F416726-48F1-4F4C-8D2F-EAF0C718944A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D11FE351-4DF2-4819-818D-651372A489DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D11FE351-4DF2-4819-818D-651372A489DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D11FE351-4DF2-4819-818D-651372A489DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D11FE351-4DF2-4819-818D-651372A489DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D11FE351-4DF2-4819-818D-651372A489DD} = {A75EA95A-5A31-477A-AA9A-CA8A00170976}
+	EndGlobalSection
+EndGlobal

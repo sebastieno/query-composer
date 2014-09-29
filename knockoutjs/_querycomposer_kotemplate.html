@@ -1,0 +1,48 @@
+﻿<script type="text/html" id="queryComposerTemplate">
+    <ul data-bind="foreach: queries" class="queries">
+        <li class="query" data-bind="css: { or: operator() === '||', and: operator() === '&&' }">
+            <select class="query-field-operator" data-bind="visible: $index() > 0,
+                options: $parent.operators,
+                optionsText: 'name',
+                value: operator,
+                optionsValue: 'value'"></select>
+
+            <select class="query-field-type" data-bind="options: $parent.fieldsDefinition,
+                       optionsText: 'text',
+                       value: field,
+                       optionsCaption: 'Sélectionnez un type de champ...'"></select>
+
+            <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].type' }, value: field() ? field().type : ''" />
+            <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].field' }, value: field() ? field().name : ''" />
+            <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].value' }, value: value" />
+            <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].operator' }, value: operator" />
+
+            <span data-bind="if: field() && field().type == QueryComposer.Model.FieldTypes.Text">
+                =
+                <input class="query-field-value" type="text" data-bind="value: value" />
+            </span>
+            <span data-bind="if: field() && field().type == QueryComposer.Model.FieldTypes.List">
+                =
+                <select class="query-field-value" data-bind="options: field().values,
+                       optionsText: 'text',
+                       optionsValue: 'value',
+                       value: value,
+                       optionsCaption: 'Sélectionnez une valeur...'"></select>
+            </span>
+            <button type="button" class="query-btn" data-bind="click: function() { $parent.removeQuery($data); }">
+                x
+            </button>
+
+            <button type="button" class="query-btn" data-bind="click: function() { $parent.goUp($data); }, enable: $index() != 0">
+                ^
+            </button>
+
+            <button type="button" class="query-btn" data-bind="click: function() { $parent.goDown($data); }, disable: $index() >= ($parent.queries().length - 1)">
+                v
+            </button>
+        </li>
+    </ul>
+    <button type="button" data-bind="click: addQuery">
+        <span class="glyphicon glyphicon-plus"></span>
+    </button>
+</script>

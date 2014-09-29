@@ -1,0 +1,70 @@
+﻿@using GPEC.Web.Shared
+
+@{
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+    ViewBag.Title = "Query Sample With Helper";
+}
+
+<div class="col-xs-12 main-container fixed-menu">
+    <section id="menu" role="menu">
+        @Html.Partial("_Menu")
+    </section>
+
+    <section role="main" id="main">
+        <form id="sampleForm">
+            @(Html.QueryComponent("samplequery")
+                .Fields(builder =>
+                {
+                    builder.AddTextField("CodePostal", "Code postal");
+                    builder.AddListField("Diplomes", "Diplômes", new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Value= "0", Text= "Brevet" },
+                            new SelectListItem { Value= "1", Text= "Bac"},
+                            new SelectListItem { Value= "2", Text= "Bac +2"},
+                            new SelectListItem { Value= "3", Text= "Bac +5"}
+                        }, "Value", "Text"));
+                    builder.AddListField("Competences", "Compétences", new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Value= "0", Text= "Parle anglais"},
+                            new SelectListItem { Value= "1", Text= "Autonome"},
+                            new SelectListItem { Value= "2", Text= "Notion office"}
+                         }, "Value", "Text"));
+                })
+                .Data(new List<QueryModel>
+                {
+                    new QueryModel { Field = "Diplomes", Operator = "&&", Value = "2" },
+                    new QueryModel { Field = "CodePostal", Operator = "&&", Value = "75015" },
+                    new QueryModel { Field = "Diplomes", Operator = "||", Value = "0" },
+                    new QueryModel { Field = "Competences", Operator = "&&", Value = "0" },
+                    new QueryModel { Field = "Competences", Operator = "&&", Value = "1" },
+                })
+                .Render())
+
+            <input type="submit" value="toJSON" />
+            <input type="submit" value="httpGet" />
+            <input type="submit" value="httpPost" />
+        </form>
+
+        <div id="response"></div>
+
+        <script type="text/javascript">
+            $("#sampleForm").submit(function (e) {
+                e.preventDefault();
+
+                var btn = $(this).find("input[type=submit]:focus")[0];
+
+                if (btn.value === "toJSON") {
+                    $("#response").html(JSON.stringify($(this).serializeArray()));
+                } else if (btn.value === "httpGet") {
+                    $.get("@Url.Action("WithHelper")", $(this).serializeArray());
+                }
+                else if (btn.value === "httpPost") {
+                    $.post("@Url.Action("PostWithHelper")", $(this).serialize());
+                }
+            });
+        </script>
+    </section>
+</div>
+
+@Scripts.Render("~/bundles/querycomponent")
+@Html.Partial("_QueryComponent")

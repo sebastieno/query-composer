@@ -1,0 +1,47 @@
+﻿@inputHeight: 26px;
+
+.queries {
+    list-style: none;
+
+    .query {
+        width: 100%;
+        clear: both;
+        padding: 2px 0 2px 4px;
+        border-left: 1px solid black;
+
+        &:first-child {
+            .query-field-type {
+                margin-left: 54px;
+            }
+        }
+
+        &.or {
+            border-left: none;
+
+            .query-field-operator {
+                margin-left: -30px;
+                margin-right: 31px;
+            }
+        }
+
+        .query-field-operator {
+            height: @inputHeight;
+            width: 50px;
+        }
+
+        .query-field-type {
+            height: @inputHeight;
+            width: 30%;
+            margin-left: 0;
+        }
+
+        .query-field-value {
+            height: @inputHeight;
+            width: 50%;
+        }
+
+        .query-btn {
+            float: right;
+        }
+    }
+}

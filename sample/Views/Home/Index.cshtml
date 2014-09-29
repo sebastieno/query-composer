@@ -1,0 +1,56 @@
+﻿@Scripts.Render("~/bundles/jquery")
+@Html.Partial("_QueryComposer_KoTemplate")
+
+<div class="col-xs-12 main-container fixed-menu">
+    <section role="main" id="main">
+        <form id="sampleForm">
+            <div class="query-composer" data-bind="template : { name: 'queryComposerTemplate' }">
+            </div>
+
+            <br />
+            <input type="submit" value="Envoyer" />
+        </form>
+
+        <div id="response"></div>
+
+        <script type="text/javascript">
+            $("#sampleForm").submit(function (e) {
+                e.preventDefault();
+
+                $("#response").html(JSON.stringify($(this).serializeArray()));
+            });
+
+            var statesList = [
+                { text: "Nouveau", value: 0 },
+                { text: "En cours", value: 1 },
+                { text: "Fermé", value: 2 },
+                { text: "Annulé", value: 3 }
+            ];
+
+            var iterationsList = [
+                { text: "Iteration 1", value: 0 },
+                { text: "Iteration 2", value: 1 },
+                { text: "Iteration 3", value: 2 },
+                { text: "Iteration 4", value: 3 },
+                { text: "Iteration 5", value: 4 },
+                { text: "Iteration 6", value: 5 }
+            ];
+
+            var areasList = [
+                { text: "Frontend", value: 0 },
+                { text: "Backend", value: 1 },
+                { text: "Design", value: 2 }
+            ];
+
+            var fieldsDefinition = [
+                new QueryComposer.Model.TextFieldDefinition("Title", "Titre"),
+                new QueryComposer.Model.ListFieldDefinition("State", "Statut", statesList),
+                new QueryComposer.Model.ListFieldDefinition("Iteration", "Itération", iterationsList),
+                new QueryComposer.Model.ListFieldDefinition("Area", "Zone", areasList),
+            ];
+            var vm = new QueryComposer.QueriesViewModel(fieldsDefinition);
+
+            ko.applyBindings(vm, $(".query-component")[0]);
+        </script>
+    </section>
+</div>
