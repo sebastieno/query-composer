@@ -16,3 +16,26 @@
 .dl-horizontal dt {
     white-space: normal;
 }
+
+table {
+    width: 100%;
+	font-size:11px;
+	color:#333333;
+    border: 1px solid #666666;
+	border-collapse: collapse;
+}
+
+table th {
+    border: 1px solid #666666;
+	padding: 8px;
+	background-color: #dedede;
+}
+table td {
+    border: 1px solid #666666;
+	padding: 8px;
+	background-color: #ffffff;
+}
+
+#response {
+    padding-top: 20px;
+}

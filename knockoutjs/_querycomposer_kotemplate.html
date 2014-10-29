@@ -34,15 +34,15 @@
             </button>
 
             <button type="button" class="query-btn" data-bind="click: function() { $parent.goUp($data); }, enable: $index() != 0">
-                ^
+                up
             </button>
 
             <button type="button" class="query-btn" data-bind="click: function() { $parent.goDown($data); }, disable: $index() >= ($parent.queries().length - 1)">
-                v
+                down
             </button>
         </li>
     </ul>
     <button type="button" data-bind="click: addQuery">
-        <span class="glyphicon glyphicon-plus"></span>
+        +
     </button>
 </script>

@@ -1,6 +1,7 @@
 ﻿using QueryComposer.MvcHelper.Model;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -22,23 +23,52 @@ namespace QueryComposer.MvcHelper
         {
             var param = Expression.Parameter(typeof(T), "p");
             Expression body = null;
-            foreach (var queryModel in queries)
+
+            var groupedQueries = GroupByOr(queries.Where(q => !string.IsNullOrEmpty(q.Field) && !string.IsNullOrEmpty(q.Operator)));
+
+            foreach (var group in groupedQueries)
             {
+                Expression groupedBody = null;
 
-                var property = Expression.Property(param, queryModel.Field);
-                var value = Expression.Constant(queryModel.Value);
-
-                var subBody = Expression.Equal(property, value);
-
-                //Grouper par ||
-                switch (queryModel.Operator)
+                foreach (var queryModel in group)
                 {
-                    case "&&":
-                        body = Expression.AndAlso(body, subBody);
-                        break;
-                    case "||":
-                        body = Expression.OrElse(body, subBody);
-                        break;
+                    var property = Expression.Property(param, queryModel.Field);
+                    if (!property.Type.IsPrimitive && property.Type.Equals(typeof(string)))
+                    {
+                        throw new ArgumentException("The type of the " + queryModel.Field + " must be a simple type.");
+                    }
+
+                    ConstantExpression value = null;
+
+                    if (property.Type == typeof(string))
+                    {
+                        value = Expression.Constant(queryModel.Value);
+                    }
+                    else
+                    {
+                        var convertedValue = Convert.ChangeType(queryModel.Value, property.Type);
+                        value = Expression.Constant(convertedValue);
+                    }
+
+                    var subBody = Expression.Equal(property, value);
+
+                    if (groupedBody != null)
+                    {
+                        groupedBody = Expression.AndAlso(groupedBody, subBody);
+                    }
+                    else
+                    {
+                        groupedBody = subBody;
+                    }
+                }
+
+                if (body != null)
+                {
+                    body = Expression.OrElse(body, groupedBody);
+                }
+                else
+                {
+                    body = groupedBody;
                 }
             }
 
@@ -50,6 +80,37 @@ namespace QueryComposer.MvcHelper
             }
 
             return query;
+        }
+
+        /// <summary>
+        /// Group a list of query by OR operator
+        /// </summary>
+        /// <param name="queries">Queries used to filter the IQueryable</param>
+        /// <returns>List of list of queries.</returns>
+        private static IEnumerable<IEnumerable<Query>> GroupByOr(IEnumerable<Query> queries)
+        {
+            var groups = new List<List<Query>>();
+            if (!queries.Any())
+            {
+                return groups;
+            }
+
+            var groupQueries = new List<Query>();
+            foreach (var query in queries)
+            {
+
+                if (query.Operator == "||" && queries.First() != query)
+                {
+                    groups.Add(groupQueries);
+                    groupQueries = new List<Query>();
+                }
+
+                groupQueries.Add(query);
+            }
+
+            groups.Add(groupQueries);
+
+            return groups;
         }
     }
 }

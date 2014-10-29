@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="81804d645786466395ce98642bd34b47" Name="Diagram1">
+        <EntityTypeShape EntityType="SampleDatabaseModel.Area" Width="1.5" PointX="5.5" PointY="1.5" />
+        <EntityTypeShape EntityType="SampleDatabaseModel.Iteration" Width="1.5" PointX="0.75" PointY="1.5" />
+        <EntityTypeShape EntityType="SampleDatabaseModel.Status" Width="1.5" PointX="5.5" PointY="3.5" />
+        <EntityTypeShape EntityType="SampleDatabaseModel.Task" Width="1.5" PointX="3" PointY="1" />
+        <AssociationConnector Association="SampleDatabaseModel.FK_Task_Area" />
+        <AssociationConnector Association="SampleDatabaseModel.FK_Task_Iteration" />
+        <AssociationConnector Association="SampleDatabaseModel.FK_Task_Status" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -7,23 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebApp
+namespace SampleApp.Data
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Category
+    public partial class Status
     {
-        public Category()
+        public Status()
         {
-            this.Products = new HashSet<Product>();
+            this.Tasks = new HashSet<Task>();
         }
     
-        public int CategoryID { get; set; }
-        public string CategoryName { get; set; }
-        public string Description { get; set; }
-        public byte[] Picture { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
     
-        public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<Task> Tasks { get; set; }
     }
 }

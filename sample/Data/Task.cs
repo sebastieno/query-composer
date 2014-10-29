@@ -7,21 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebApp
+namespace SampleApp.Data
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class CustomerDemographic
+    public partial class Task
     {
-        public CustomerDemographic()
-        {
-            this.Customers = new HashSet<Customer>();
-        }
+        public int Id { get; set; }
+        public int StatusId { get; set; }
+        public int IterationId { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int AreaId { get; set; }
     
-        public string CustomerTypeID { get; set; }
-        public string CustomerDesc { get; set; }
-    
-        public virtual ICollection<Customer> Customers { get; set; }
+        public virtual Area Area { get; set; }
+        public virtual Iteration Iteration { get; set; }
+        public virtual Status Status { get; set; }
     }
 }

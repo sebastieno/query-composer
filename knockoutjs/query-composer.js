@@ -79,11 +79,18 @@ var QueryComposer;
     })(QueryComposer.Model || (QueryComposer.Model = {}));
     var Model = QueryComposer.Model;
 
+    var Configuration = (function () {
+        function Configuration() {
+        }
+        return Configuration;
+    })();
+    QueryComposer.Configuration = Configuration;
+
     /*
     * View model used to create queries composition
     */
     var QueriesViewModel = (function () {
-        function QueriesViewModel(fieldsDefinition, queries) {
+        function QueriesViewModel(fieldsDefinition, configuration, queries) {
             /*
             * Queries of the composition
             */
@@ -118,6 +125,10 @@ var QueryComposer;
                         console.warn("The field " + queries[i].field + " cannot be retrieved from the fields definition");
                     }
                 }
+            }
+
+            if (configuration && configuration.showNewEmptyLine) {
+                this.addQuery();
             }
         }
         QueriesViewModel.prototype.addQuery = function () {

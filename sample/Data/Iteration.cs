@@ -7,20 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebApp
+namespace SampleApp.Data
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Order_Detail
+    public partial class Iteration
     {
-        public int OrderID { get; set; }
-        public int ProductID { get; set; }
-        public decimal UnitPrice { get; set; }
-        public short Quantity { get; set; }
-        public float Discount { get; set; }
+        public Iteration()
+        {
+            this.Tasks = new HashSet<Task>();
+        }
     
-        public virtual Order Order { get; set; }
-        public virtual Product Product { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+    
+        public virtual ICollection<Task> Tasks { get; set; }
     }
 }

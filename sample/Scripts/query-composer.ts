@@ -86,6 +86,10 @@ module QueryComposer {
         }
     }
 
+    export class Configuration {
+        public showNewEmptyLine: boolean;
+    }
+
     /*
      * View model used to create queries composition
      */
@@ -105,7 +109,7 @@ module QueryComposer {
          */
         public operators: any = [{ name: 'ET', value: '&&' }, { name: 'OU', value: '||' }];
 
-        constructor(fieldsDefinition: Model.FieldDefinition[], queries: any) {
+        constructor(fieldsDefinition: Model.FieldDefinition[], configuration: Configuration, queries: any) {
             this.fieldsDefinition = fieldsDefinition;
 
             if (queries) {
@@ -132,6 +136,10 @@ module QueryComposer {
                         console.warn("The field " + queries[i].field + " cannot be retrieved from the fields definition");
                     }
                 }
+            }
+
+            if (configuration && configuration.showNewEmptyLine) {
+                this.addQuery();
             }
         }
 
