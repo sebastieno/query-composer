@@ -18,6 +18,7 @@
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Current" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Status">
           <Key>
@@ -30,7 +31,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="StatusId" Type="int" Nullable="false" />
           <Property Name="IterationId" Type="int" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -128,6 +129,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Tasks" Relationship="SampleDatabaseModel.FK_Task_Iteration" FromRole="Iteration" ToRole="Task" />
+          <Property Name="Current" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Status">
           <Key>
@@ -204,6 +206,7 @@
           <EntitySetMapping Name="Iterations">
             <EntityTypeMapping TypeName="SampleDatabaseModel.Iteration">
               <MappingFragment StoreEntitySet="Iteration">
+                <ScalarProperty Name="Current" ColumnName="Current" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

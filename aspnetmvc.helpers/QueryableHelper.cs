@@ -32,7 +32,20 @@ namespace QueryComposer.MvcHelper
 
                 foreach (var queryModel in group)
                 {
-                    var property = Expression.Property(param, queryModel.Field);
+                    MemberExpression property = null;
+                    var splittedFields = queryModel.Field.Split('.');
+                    foreach(var splittedField in splittedFields)
+                    {
+                        if(property == null)
+                        {
+                            property = Expression.Property(param, splittedField);
+                        }
+                        else
+                        {
+                            property = Expression.Property(property, splittedField);
+                        }
+                    }
+
                     if (!property.Type.IsPrimitive && property.Type.Equals(typeof(string)))
                     {
                         throw new ArgumentException("The type of the " + queryModel.Field + " must be a simple type.");

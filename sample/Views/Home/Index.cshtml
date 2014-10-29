@@ -39,6 +39,7 @@
                 new QueryComposer.Model.ListFieldDefinition("StatusId", "Statut", statesList),
                 new QueryComposer.Model.ListFieldDefinition("IterationId", "Itération", iterationsList),
                 new QueryComposer.Model.ListFieldDefinition("AreaId", "Zone", areasList),
+                new QueryComposer.Model.ListFieldDefinition("Iteration.Current", "Itération courante", [{ text : 'Oui', value: true }, { text : 'Non', value: false }]),
             ];
 
             var vm = new QueryComposer.QueriesViewModel(fieldsDefinition, { showNewEmptyLine: true });

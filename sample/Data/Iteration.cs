@@ -21,6 +21,7 @@ namespace SampleApp.Data
     
         public int Id { get; set; }
         public string Name { get; set; }
+        public bool Current { get; set; }
     
         public virtual ICollection<Task> Tasks { get; set; }
     }
