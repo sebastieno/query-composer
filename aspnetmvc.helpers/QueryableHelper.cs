@@ -21,6 +21,11 @@ namespace QueryComposer.MvcHelper
         /// <returns></returns>
         public static IQueryable<T> FilterByQueries<T>(this IQueryable<T> query, IEnumerable<Query> queries)
         {
+            if(queries == null)
+            {
+                return query;
+            }
+
             var param = Expression.Parameter(typeof(T), "p");
             Expression body = null;
 
@@ -46,7 +51,7 @@ namespace QueryComposer.MvcHelper
                         }
                     }
 
-                    if (!property.Type.IsPrimitive && property.Type.Equals(typeof(string)))
+                    if (!property.Type.IsPrimitive && !property.Type.Equals(typeof(string)))
                     {
                         throw new ArgumentException("The type of the " + queryModel.Field + " must be a simple type.");
                     }
