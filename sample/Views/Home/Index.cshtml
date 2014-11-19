@@ -35,11 +35,16 @@
             var areasList =  @Html.Raw(Json.Encode(Model.Areas.Select(s => new { text = s.Name, value = s.Id })));
 
             var fieldsDefinition = [
-                new QueryComposer.Model.TextFieldDefinition("Title", "Titre"),
-                new QueryComposer.Model.ListFieldDefinition("StatusId", "Statut", statesList),
-                new QueryComposer.Model.ListFieldDefinition("IterationId", "Itération", iterationsList),
-                new QueryComposer.Model.ListFieldDefinition("AreaId", "Zone", areasList),
-                new QueryComposer.Model.ListFieldDefinition("Iteration.Current", "Itération courante", [{ text : 'Oui', value: true }, { text : 'Non', value: false }]),
+                new QueryComposer.Model.SimpleQueryDefinition(new QueryComposer.Model.TextFieldDefinition("Title", "Titre")),
+                new QueryComposer.Model.SimpleQueryDefinition( new QueryComposer.Model.ListFieldDefinition("StatusId", "Statut", statesList)),
+                new QueryComposer.Model.SimpleQueryDefinition(new QueryComposer.Model.ListFieldDefinition("IterationId", "Itération", iterationsList)),
+                new QueryComposer.Model.SimpleQueryDefinition(new QueryComposer.Model.ListFieldDefinition("AreaId", "Zone", areasList)),
+                new QueryComposer.Model.SimpleQueryDefinition( new QueryComposer.Model.ListFieldDefinition("Iteration.Current", "Itération courante", [{ text : 'Oui', value: true }, { text : 'Non', value: false }])),
+                new QueryComposer.Model.MultipleQueryDefinition(
+                    [new QueryComposer.Model.TextFieldDefinition("Title", "Titre"),
+                    new QueryComposer.Model.TextFieldDefinition("StartDate", "Date de début"),
+                    new QueryComposer.Model.TextFieldDefinition("EndDate", "Date de fin"),
+                    new QueryComposer.Model.ListFieldDefinition("Iteration.Current", "Itération courante", [{ text : 'Oui', value: true }, { text : 'Non', value: false }])])
             ];
 
             var vm = new QueryComposer.QueriesViewModel(fieldsDefinition, { showNewEmptyLine: true });

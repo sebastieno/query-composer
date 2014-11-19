@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections;
+using System.Web.Mvc;
 
 namespace QueryComposer.MvcHelper.Model
 {
@@ -22,7 +23,13 @@ namespace QueryComposer.MvcHelper.Model
             /// List field
             /// </summary>
             /// <remarks>With this type of field, the user must select a value from a list</remarks>
-            List
+            List,
+
+            /// <summary>
+            /// Multiple field
+            /// </summary>
+            /// <remarks>This type represents an aggregation of many fields.</remarks>
+            Multiple
         }
 
         /// <summary>

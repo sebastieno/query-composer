@@ -64,7 +64,6 @@ namespace QueryComposer.MvcHelper
 
             StringBuilder jsBuilder = new StringBuilder();
             jsBuilder.AppendLine("<script type='text/javascript'>");
-            //jsBuilder.AppendLine("$(function() {");
             jsBuilder.Append("var vm = new QueryComponent.QueriesViewModel([");
             foreach (var field in component.Fields)
             {
@@ -119,7 +118,6 @@ namespace QueryComposer.MvcHelper
 
             jsBuilder.AppendLine("]);");
             jsBuilder.AppendLine("ko.applyBindings(vm, $(\"[data-querycomponent-name='" + component.Name + "'\")[0]);");
-            //jsBuilder.AppendLine("});");
             jsBuilder.Append("</script>");
 
             container.InnerHtml = mainDiv.ToString(TagRenderMode.Normal) + jsBuilder.ToString();

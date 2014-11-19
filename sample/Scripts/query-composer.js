@@ -4,13 +4,22 @@ var QueryComposer;
 (function (QueryComposer) {
     (function (Model) {
         /*
+        * Type of the query
+        */
+        (function (QueryType) {
+            QueryType[QueryType["Simple"] = 0] = "Simple";
+            QueryType[QueryType["Multiple"] = 1] = "Multiple";
+        })(Model.QueryType || (Model.QueryType = {}));
+        var QueryType = Model.QueryType;
+
+        /*
         * Type of the field
         */
-        (function (FieldTypes) {
-            FieldTypes[FieldTypes["Text"] = 0] = "Text";
-            FieldTypes[FieldTypes["List"] = 1] = "List";
-        })(Model.FieldTypes || (Model.FieldTypes = {}));
-        var FieldTypes = Model.FieldTypes;
+        (function (FieldType) {
+            FieldType[FieldType["Text"] = 0] = "Text";
+            FieldType[FieldType["List"] = 1] = "List";
+        })(Model.FieldType || (Model.FieldType = {}));
+        var FieldType = Model.FieldType;
 
         /*
         * Model representing a query
@@ -20,7 +29,7 @@ var QueryComposer;
                 /*
                 * Field used for the query
                 */
-                this.field = ko.observable(null);
+                this.queryDefinition = ko.observable(null);
                 /*
                 * Value used for the query
                 */
@@ -48,6 +57,28 @@ var QueryComposer;
 
         
 
+        var SimpleQueryDefinition = (function () {
+            function SimpleQueryDefinition(field) {
+                this.type = 0 /* Simple */;
+                this.field = field;
+                this.text = this.field.text;
+            }
+            return SimpleQueryDefinition;
+        })();
+        Model.SimpleQueryDefinition = SimpleQueryDefinition;
+
+        var MultipleQueryDefinition = (function () {
+            function MultipleQueryDefinition(fields) {
+                this.type = 1 /* Multiple */;
+                this.fields = fields;
+                this.text = this.fields[0].text;
+            }
+            return MultipleQueryDefinition;
+        })();
+        Model.MultipleQueryDefinition = MultipleQueryDefinition;
+
+        
+
         /*
         * Model representing a text field definition
         */
@@ -56,7 +87,6 @@ var QueryComposer;
                 this.type = 0 /* Text */;
                 this.name = name;
                 this.text = text;
-                this.type = 0 /* Text */;
             }
             return TextFieldDefinition;
         })();
@@ -67,11 +97,10 @@ var QueryComposer;
         */
         var ListFieldDefinition = (function () {
             function ListFieldDefinition(name, text, values) {
-                this.type = 0 /* Text */;
+                this.type = 1 /* List */;
                 this.name = name;
                 this.text = text;
                 this.values = values;
-                this.type = 1 /* List */;
             }
             return ListFieldDefinition;
         })();
@@ -90,7 +119,7 @@ var QueryComposer;
     * View model used to create queries composition
     */
     var QueriesViewModel = (function () {
-        function QueriesViewModel(fieldsDefinition, configuration, queries) {
+        function QueriesViewModel(queriesDefinition, configuration, queries) {
             /*
             * Queries of the composition
             */
@@ -99,34 +128,28 @@ var QueryComposer;
             * Operators list, used between each query
             */
             this.operators = [{ name: 'ET', value: '&&' }, { name: 'OU', value: '||' }];
-            this.fieldsDefinition = fieldsDefinition;
+            this.queriesDefinition = queriesDefinition;
 
-            if (queries) {
-                for (var i = 0; i < queries.length; i++) {
-                    var query = new Model.Query();
-
-                    var fields = this.fieldsDefinition.filter(function (field) {
-                        return field.name == queries[i].field;
-                    });
-
-                    if (fields.length === 1) {
-                        query.field(fields[0]);
-
-                        if (this.queries().length == 0) {
-                            query.operator("&&");
-                        } else {
-                            query.operator(queries[i].operator);
-                        }
-
-                        query.value(queries[i].value);
-
-                        this.queries.push(query);
-                    } else {
-                        console.warn("The field " + queries[i].field + " cannot be retrieved from the fields definition");
-                    }
-                }
-            }
-
+            //if (queries) {
+            //    for (var i = 0; i < queries.length; i++) {
+            //        var query = new Model.Query();
+            //        var fields = this.fieldsDefinition.filter(function (field) {
+            //            return true; // TODO: field.name == queries[i].field;
+            //        });
+            //        //if (fields.length === 1) {
+            //        //    query.field(fields[0]);
+            //        //    if (this.queries().length == 0) {
+            //        //        query.operator("&&");
+            //        //    } else {
+            //        //        query.operator(queries[i].operator);
+            //        //    }
+            //        //    query.value(queries[i].value);
+            //        //    this.queries.push(query);
+            //        //} else {
+            //        //    console.warn("The field " + queries[i].field + " cannot be retrieved from the fields definition");
+            //        //}
+            //    }
+            //}
             if (configuration && configuration.showNewEmptyLine) {
                 this.addQuery();
             }

@@ -1,48 +1,87 @@
 ﻿<script type="text/html" id="queryComposerTemplate">
     <ul data-bind="foreach: queries" class="queries">
-        <li class="query" data-bind="css: { or: operator() === '||', and: operator() === '&&' }">
-            <select class="query-field-operator" data-bind="visible: $index() > 0,
+        <li data-bind="css: { or: operator() === '||', and: operator() === '&&' }">
+            <span class="query">
+                <select class="query-field-operator" data-bind="visible: $index() > 0,
                 options: $parent.operators,
                 optionsText: 'name',
                 value: operator,
                 optionsValue: 'value'"></select>
 
-            <select class="query-field-type" data-bind="options: $parent.fieldsDefinition,
+                <select class="query-field-type" data-bind="options: $parent.queriesDefinition,
                        optionsText: 'text',
-                       value: field,
+                       value: queryDefinition,
                        optionsCaption: 'Sélectionnez un type de champ...'"></select>
 
-            <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].type' }, value: field() ? field().type : ''" />
-            <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].field' }, value: field() ? field().name : ''" />
-            <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].value' }, value: value" />
-            <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].operator' }, value: operator" />
-
-            <span data-bind="if: field() && field().type == QueryComposer.Model.FieldTypes.Text">
-                =
-                <input class="query-field-value" type="text" data-bind="value: value" />
+                <!-- ko if: queryDefinition() -->
+                <!-- ko template: 'queryComposerQueryDefinition' +  queryDefinition().type + 'Template' -->
+                <!-- /ko -->
+                <!-- /ko -->
             </span>
-            <span data-bind="if: field() && field().type == QueryComposer.Model.FieldTypes.List">
-                =
-                <select class="query-field-value" data-bind="options: field().values,
-                       optionsText: 'text',
-                       optionsValue: 'value',
-                       value: value,
-                       optionsCaption: 'Sélectionnez une valeur...'"></select>
+            <span class="action-buttons">
+                <button type="button" class="query-btn" data-bind="click: function() { $parent.goDown($data); }, disable: $index() >= ($parent.queries().length - 1)">
+                    down
+                </button>
+                <button type="button" class="query-btn" data-bind="click: function() { $parent.goUp($data); }, enable: $index() != 0">
+                    up
+                </button>
+                <button type="button" class="query-btn" data-bind="click: function() { $parent.removeQuery($data); }">
+                    x
+                </button>
             </span>
-            <button type="button" class="query-btn" data-bind="click: function() { $parent.removeQuery($data); }">
-                x
-            </button>
-
-            <button type="button" class="query-btn" data-bind="click: function() { $parent.goUp($data); }, enable: $index() != 0">
-                up
-            </button>
-
-            <button type="button" class="query-btn" data-bind="click: function() { $parent.goDown($data); }, disable: $index() >= ($parent.queries().length - 1)">
-                down
-            </button>
         </li>
     </ul>
     <button type="button" data-bind="click: addQuery">
         +
     </button>
+</script>
+
+<script type="text/html" id="queryComposerQueryDefinition0Template">
+    <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].type' }, value: queryDefinition().field.type" />
+    <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].field' }, value: queryDefinition().field.name" />
+    <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].value' }, value: value" />
+    <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].operator' }, value: operator" />
+
+    <!-- ko template: 'queryComposerFieldDefinition' +  queryDefinition().field.type + 'Template' -->
+    <!-- /ko -->
+</script>
+
+<script type="text/html" id="queryComposerQueryDefinition1Template">
+    @*<input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].type' }, value: queryDefinition().fields[0].type" />
+        <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].field' }, value: queryDefinition().field.name" />
+        <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].value' }, value: value" />
+        <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].operator' }, value: operator" />*@
+
+    <!-- ko template: 'queryComposerFieldDefinition' +  queryDefinition().fields[0].type + 'Template' -->
+    <!-- /ko -->
+
+    <ul data-bind="foreach: queryDefinition().fields" class="query-subqueries">
+        <!-- ko if:  $index() > 0 -->
+        <li class="query-subquery">
+            jean bon
+            @*<input type="hidden" data-bind="attr : { name: 'queries[' + $parentContext.$index() + '].subValues[' + $index() + '].type' }, value: field() ? field().type : ''" />
+                <input type="hidden" data-bind="attr : { name: 'queries[' + $parentContext.$index() + '].subQueries[' + $index() + '].field' }, value: field() ? field().name : ''" />
+                <input type="hidden" data-bind="attr : { name: 'queries[' + $parentContext.$index() + '].subQueries[' + $index() + '].value' }, value: value" />
+                <input type="hidden" data-bind="attr : { name: 'queries[' + $parentContext.$index() + '].subQueries[' + $index() + '].operator' }, value: operator" />
+
+                <span data-bind="text: field().text"></span>
+                <!-- ko template: 'queryComposerFieldDefinition' +  field().type + 'Template' -->
+                <!-- /ko -->*@
+        </li>
+        <!-- /ko -->    
+    </ul>
+</script>
+
+<script type="text/html" id="queryComposerFieldDefinition0Template">
+    =
+    <input class="query-field-value" type="text" data-bind="value: value" />
+</script>
+
+<script type="text/html" id="queryComposerFieldDefinition1Template">
+    =
+    <select class="query-field-value" data-bind="options: queryDefinition().field.values,
+                       optionsText: 'text',
+                       optionsValue: 'value',
+                       value: value,
+                       optionsCaption: 'Sélectionnez une valeur...'"></select>
 </script>

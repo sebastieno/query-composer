@@ -4,9 +4,17 @@
 module QueryComposer {
     export module Model {
         /*
+         * Type of the query
+         */
+        export enum QueryType {
+            Simple,
+            Multiple
+        }
+
+        /*
          * Type of the field
          */
-        export enum FieldTypes {
+        export enum FieldType {
             Text,
             List
         }
@@ -18,7 +26,7 @@ module QueryComposer {
             /*
              * Field used for the query
              */
-            public field: KnockoutObservable<FieldDefinition> = ko.observable(null);
+            public queryDefinition: KnockoutObservable<any> = ko.observable(null);
 
             /*
              * Value used for the query
@@ -45,12 +53,42 @@ module QueryComposer {
         }
 
         /*
+         * Interface representing a query definition
+         */
+        export interface QueryDefinition {
+            type: QueryType;
+            text: string;
+        }
+
+        export class SimpleQueryDefinition implements QueryDefinition {
+            public type: QueryType = QueryType.Simple;
+            public field: FieldDefinition;
+            public text: string;
+
+            constructor(field: FieldDefinition) {
+                this.field = field;
+                this.text = this.field.text;
+            }
+        }
+
+        export class MultipleQueryDefinition implements QueryDefinition {
+            public type: QueryType = QueryType.Multiple;
+            public fields: FieldDefinition[];
+            public text: string;
+
+            constructor(fields: FieldDefinition[]) {
+                this.fields = fields;
+                this.text = this.fields[0].text;
+            }
+        }
+
+        /*
          * Interface representing a field definition
          */
         export interface FieldDefinition {
             name: string;
             text: string;
-            type: FieldTypes;
+            type: FieldType;
         }
 
         /*
@@ -59,12 +97,11 @@ module QueryComposer {
         export class TextFieldDefinition implements FieldDefinition {
             public name: string;
             public text: string;
-            public type: FieldTypes = FieldTypes.Text;
+            public type: FieldType = FieldType.Text;
 
             constructor(name: string, text: string) {
                 this.name = name;
                 this.text = text;
-                this.type = FieldTypes.Text;
             }
         }
 
@@ -75,13 +112,12 @@ module QueryComposer {
             public name: string;
             public text: string;
             public values: ListValue[];
-            public type: FieldTypes = FieldTypes.Text;
+            public type: FieldType = FieldType.List;
 
             constructor(name: string, text: string, values: ListValue[]) {
                 this.name = name;
                 this.text = text;
                 this.values = values;
-                this.type = FieldTypes.List;
             }
         }
     }
@@ -100,43 +136,43 @@ module QueryComposer {
         public queries: KnockoutObservableArray<Model.Query> = ko.observableArray([]);
 
         /*
-         * List of fields definition
+         * List of queries definition
          */
-        public fieldsDefinition: Model.FieldDefinition[];
+        public queriesDefinition: Model.QueryDefinition[];
 
         /*
          * Operators list, used between each query
          */
         public operators: any = [{ name: 'ET', value: '&&' }, { name: 'OU', value: '||' }];
 
-        constructor(fieldsDefinition: Model.FieldDefinition[], configuration: Configuration, queries: any) {
-            this.fieldsDefinition = fieldsDefinition;
+        constructor(queriesDefinition: Model.QueryDefinition[], configuration: Configuration, queries: any) {
+            this.queriesDefinition = queriesDefinition;
 
-            if (queries) {
-                for (var i = 0; i < queries.length; i++) {
-                    var query = new Model.Query();
+            //if (queries) {
+            //    for (var i = 0; i < queries.length; i++) {
+            //        var query = new Model.Query();
 
-                    var fields = this.fieldsDefinition.filter(function (field) {
-                        return field.name == queries[i].field;
-                    });
+            //        var fields = this.fieldsDefinition.filter(function (field) {
+            //            return true; // TODO: field.name == queries[i].field;
+            //        });
 
-                    if (fields.length === 1) {
-                        query.field(fields[0]);
+            //        //if (fields.length === 1) {
+            //        //    query.field(fields[0]);
 
-                        if (this.queries().length == 0) {
-                            query.operator("&&");
-                        } else {
-                            query.operator(queries[i].operator);
-                        }
+            //        //    if (this.queries().length == 0) {
+            //        //        query.operator("&&");
+            //        //    } else {
+            //        //        query.operator(queries[i].operator);
+            //        //    }
 
-                        query.value(queries[i].value);
+            //        //    query.value(queries[i].value);
 
-                        this.queries.push(query);
-                    } else {
-                        console.warn("The field " + queries[i].field + " cannot be retrieved from the fields definition");
-                    }
-                }
-            }
+            //        //    this.queries.push(query);
+            //        //} else {
+            //        //    console.warn("The field " + queries[i].field + " cannot be retrieved from the fields definition");
+            //        //}
+            //    }
+            //}
 
             if (configuration && configuration.showNewEmptyLine) {
                 this.addQuery();

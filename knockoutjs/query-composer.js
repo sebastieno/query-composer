@@ -9,6 +9,7 @@ var QueryComposer;
         (function (FieldTypes) {
             FieldTypes[FieldTypes["Text"] = 0] = "Text";
             FieldTypes[FieldTypes["List"] = 1] = "List";
+            FieldTypes[FieldTypes["Multiple"] = 2] = "Multiple";
         })(Model.FieldTypes || (Model.FieldTypes = {}));
         var FieldTypes = Model.FieldTypes;
 
@@ -56,7 +57,6 @@ var QueryComposer;
                 this.type = 0 /* Text */;
                 this.name = name;
                 this.text = text;
-                this.type = 0 /* Text */;
             }
             return TextFieldDefinition;
         })();
@@ -67,15 +67,35 @@ var QueryComposer;
         */
         var ListFieldDefinition = (function () {
             function ListFieldDefinition(name, text, values) {
-                this.type = 0 /* Text */;
+                this.type = 1 /* List */;
                 this.name = name;
                 this.text = text;
                 this.values = values;
-                this.type = 1 /* List */;
             }
             return ListFieldDefinition;
         })();
         Model.ListFieldDefinition = ListFieldDefinition;
+
+        /*
+        * Model representing a field composed of a main field, and some childs fields
+        */
+        var MultipleFieldsDefinition = (function () {
+            //public subQueries: Query[] = [];
+            function MultipleFieldsDefinition(mainField, childrenFields) {
+                this.type = 2 /* Multiple */;
+                this.mainField = mainField;
+                this.name = mainField.name;
+                this.text = mainField.text;
+                this.childrenFields = childrenFields;
+                //childrenFields.forEach(field => {
+                //    var query = new Query();
+                //    query.field(field);
+                //    this.subQueries.push(query);
+                //});
+            }
+            return MultipleFieldsDefinition;
+        })();
+        Model.MultipleFieldsDefinition = MultipleFieldsDefinition;
     })(QueryComposer.Model || (QueryComposer.Model = {}));
     var Model = QueryComposer.Model;
 
@@ -106,7 +126,7 @@ var QueryComposer;
                     var query = new Model.Query();
 
                     var fields = this.fieldsDefinition.filter(function (field) {
-                        return field.name == queries[i].field;
+                        return true;
                     });
 
                     if (fields.length === 1) {
@@ -132,7 +152,7 @@ var QueryComposer;
             }
         }
         QueriesViewModel.prototype.addQuery = function () {
-            this.queries.push(new Model.Query());
+            this.queries.push({});
         };
 
         QueriesViewModel.prototype.removeQuery = function (query) {

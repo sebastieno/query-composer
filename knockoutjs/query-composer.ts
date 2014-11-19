@@ -8,13 +8,17 @@ module QueryComposer {
          */
         export enum FieldTypes {
             Text,
-            List
+            List,
+            Multiple
+        }
+
+        export interface IQuery {
         }
 
         /*
          * Model representing a query
          */
-        export class Query {
+        export class Query implements IQuery {
             /*
              * Field used for the query
              */
@@ -64,7 +68,6 @@ module QueryComposer {
             constructor(name: string, text: string) {
                 this.name = name;
                 this.text = text;
-                this.type = FieldTypes.Text;
             }
         }
 
@@ -75,13 +78,40 @@ module QueryComposer {
             public name: string;
             public text: string;
             public values: ListValue[];
-            public type: FieldTypes = FieldTypes.Text;
+            public type: FieldTypes = FieldTypes.List;
 
             constructor(name: string, text: string, values: ListValue[]) {
                 this.name = name;
                 this.text = text;
                 this.values = values;
-                this.type = FieldTypes.List;
+            }
+        }
+
+        /*
+         * Model representing a field composed of a main field, and some childs fields
+         */
+        export class MultipleFieldsDefinition implements FieldDefinition {
+            public name: string;
+            public text: string;
+            public mainField: FieldDefinition;
+            public type: FieldTypes = FieldTypes.Multiple;
+
+            public childrenFields: FieldDefinition[];
+
+            //public subQueries: Query[] = [];
+
+            constructor(mainField: FieldDefinition, childrenFields: FieldDefinition[]) {
+                this.mainField = mainField;
+                this.name = mainField.name;
+                this.text = mainField.text;
+                this.childrenFields = childrenFields;
+
+                //childrenFields.forEach(field => {
+                //    var query = new Query();
+                //    query.field(field);
+
+                //    this.subQueries.push(query);
+                //});
             }
         }
     }
@@ -97,7 +127,7 @@ module QueryComposer {
         /*
          * Queries of the composition
          */
-        public queries: KnockoutObservableArray<Model.Query> = ko.observableArray([]);
+        public queries: KnockoutObservableArray<Model.IQuery> = ko.observableArray([]);
 
         /*
          * List of fields definition
@@ -117,7 +147,7 @@ module QueryComposer {
                     var query = new Model.Query();
 
                     var fields = this.fieldsDefinition.filter(function (field) {
-                        return field.name == queries[i].field;
+                        return true; // TODO: field.name == queries[i].field;
                     });
 
                     if (fields.length === 1) {
@@ -144,7 +174,7 @@ module QueryComposer {
         }
 
         addQuery(): void {
-            this.queries.push(new Model.Query());
+            this.queries.push({});
         }
 
         removeQuery(query: Model.Query): void {
