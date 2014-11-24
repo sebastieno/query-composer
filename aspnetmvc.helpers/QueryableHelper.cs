@@ -29,7 +29,7 @@ namespace QueryComposer.MvcHelper
             var param = Expression.Parameter(typeof(T), "p");
             Expression body = null;
 
-            var groupedQueries = GroupByOr(queries.Where(q => !string.IsNullOrEmpty(q.Field) && !string.IsNullOrEmpty(q.Operator)));
+            var groupedQueries = GroupByOr(queries.Where(q => !string.IsNullOrEmpty(q.Field) && !string.IsNullOrEmpty(q.Operator) && !string.IsNullOrEmpty(q.Value)));
 
             foreach (var group in groupedQueries)
             {
@@ -116,7 +116,6 @@ namespace QueryComposer.MvcHelper
             var groupQueries = new List<Query>();
             foreach (var query in queries)
             {
-
                 if (query.Operator == "||" && queries.First() != query)
                 {
                     groups.Add(groupQueries);

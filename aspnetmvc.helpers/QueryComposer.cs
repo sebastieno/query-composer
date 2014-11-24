@@ -22,5 +22,10 @@ namespace QueryComposer.MvcHelper
         /// Current queries of the query composer component
         /// </summary>
         public IEnumerable<Query> Queries { get; internal set; }
+
+        /// <summary>
+        /// Configuration of the query composer component
+        /// </summary>
+        public QueryComposerConfiguration Configuration { get; internal set; }
     }
 }
