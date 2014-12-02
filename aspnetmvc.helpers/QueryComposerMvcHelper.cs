@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 
 namespace QueryComposer.MvcHelper
@@ -68,45 +69,41 @@ namespace QueryComposer.MvcHelper
             {
                 if (field.Type == FieldDefinition.Types.Text)
                 {
-                    jsBuilder.AppendLine("new QueryComposer.Model.TextFieldDefinition('" + field.Name + "', '" + field.Text + "'),");
+                    jsBuilder.AppendLine("new QueryComposer.Model.TextFieldDefinition('" + field.Name + "', '" + HttpUtility.JavaScriptStringEncode(field.Text) + "'),");
                 }
                 else if (field.Type == FieldDefinition.Types.List)
                 {
-                    var data = string.Join(", ", field.Values.Select(v => "{ text: '" + v.Text + "', value: '" + v.Value + "'}"));
+                    var data = string.Join(", ", field.Values.Select(v => "{ text: '" + HttpUtility.JavaScriptStringEncode(v.Text) + "', value: '" + v.Value + "'}"));
 
-                    jsBuilder.AppendLine("new QueryComposer.Model.ListFieldDefinition('" + field.Name + "', '" + field.Text + "', [" + data + "]),");
+                    jsBuilder.AppendLine("new QueryComposer.Model.ListFieldDefinition('" + field.Name + "', '" + HttpUtility.JavaScriptStringEncode(field.Text) + "', [" + data + "]),");
                 }
             }
 
             jsBuilder.AppendLine("];");
 
-            //if (component.Queries != null && component.Queries.Any())
-            //{
-            //    jsBuilder.AppendLine("],");
-            //    jsBuilder.Append("[");
+            if (component.Queries != null && component.Queries.Any())
+            {
+                jsBuilder.AppendLine("var data = [");
 
-            //    foreach (var query in component.Queries)
-            //    {
-            //        jsBuilder.Append("{");
+                foreach (var query in component.Queries)
+                {
+                    jsBuilder.Append("{");
 
-            //        jsBuilder.Append("field: '" + query.Field + "'");
-            //        jsBuilder.Append(", value: '" + query.Value + "'");
-            //        jsBuilder.Append(", operator: '" + query.Operator + "'");
+                    jsBuilder.Append("field: '" + query.Field + "'");
+                    jsBuilder.Append(", value: '" + query.Value + "'");
+                    jsBuilder.Append(", operator: '" + query.Operator + "'},");
+                }
 
-            //        if (component.Queries.Last() == query)
-            //        {
-            //            jsBuilder.Append("}");
-            //        }
-            //        else
-            //        {
-            //            jsBuilder.Append("},");
-            //        }
-            //    }
-            //}
+                jsBuilder.AppendLine("];");
+            }
+            else
+            {
+                jsBuilder.AppendLine("var data = [];");
+            }
 
             jsBuilder.Append("var vm = new QueryComposer.QueriesViewModel(fieldsDefinition, ");
             jsBuilder.AppendLine("{ showNewEmptyLine: " + component.Configuration.ShowNewEmptyLine.ToString().ToLowerInvariant() + "}");
-            jsBuilder.AppendLine(");");
+            jsBuilder.AppendLine(", data);");
             jsBuilder.AppendLine("ko.applyBindings(vm, document.getElementById('" + component.Name + "')[0]);");
             jsBuilder.Append("</script>");
 

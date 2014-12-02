@@ -1,5 +1,6 @@
 ﻿@model SampleApp.Models.IndexModel
 @using QueryComposer.MvcHelper
+@using QueryComposer.MvcHelper.Model
 
 @Scripts.Render("~/bundles/jquery")
 @Html.Partial("_QueryComposer_KoTemplate")
@@ -12,11 +13,17 @@
             @(Html.QueryComposer("samplequery", new QueryComposerConfiguration { ShowNewEmptyLine = true })
                 .Fields(builder =>
             {
-                builder.AddTextField("Title", "Titre");
+                builder.AddTextField("Title", "Titre de l'itération");
                 builder.AddListField("StatusId", "Statut", new SelectList(Model.Statuses, "Id", "Name"));
                 builder.AddListField("IterationId", "Itération", new SelectList(Model.Iterations, "Id", "Name"));
                 builder.AddListField("AreaId", "Zone", new SelectList(Model.Areas, "Id", "Name"));
-            }).Render())
+            })
+            .Data(new List<Query>()
+            {
+                new Query { Field = "Title", Operator = "&&", Value = "Mon titre" },
+                new Query { Field = "StatusId", Operator = "||", Value = "4" }
+            })
+            .Render())
 
             <br />
             <input type="submit" value="Rechercher" />
