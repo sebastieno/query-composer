@@ -104,7 +104,7 @@ namespace QueryComposer.MvcHelper
             jsBuilder.Append("var vm = new QueryComposer.QueriesViewModel(fieldsDefinition, ");
             jsBuilder.AppendLine("{ showNewEmptyLine: " + component.Configuration.ShowNewEmptyLine.ToString().ToLowerInvariant() + "}");
             jsBuilder.AppendLine(", data);");
-            jsBuilder.AppendLine("ko.applyBindings(vm, document.getElementById('" + component.Name + "')[0]);");
+            jsBuilder.AppendLine("ko.applyBindings(vm, document.getElementById('" + component.Name + "'));");
             jsBuilder.Append("</script>");
 
             return MvcHtmlString.Create(container.ToString(TagRenderMode.Normal) + jsBuilder.ToString());
