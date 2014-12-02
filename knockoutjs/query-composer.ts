@@ -12,13 +12,10 @@ module QueryComposer {
             Multiple
         }
 
-        export interface IQuery {
-        }
-
         /*
          * Model representing a query
          */
-        export class Query implements IQuery {
+        export class Query {
             /*
              * Field used for the query
              */
@@ -33,6 +30,9 @@ module QueryComposer {
              * Operator between this query and the previous one
              */
             public operator: KnockoutObservable<string> = ko.observable("");
+
+
+            public dependantQuery: boolean = false;
         }
 
         /**
@@ -88,30 +88,22 @@ module QueryComposer {
         }
 
         /*
-         * Model representing a field composed of a main field, and some childs fields
+         * Model representing a multiple fields definition
          */
         export class MultipleFieldsDefinition implements FieldDefinition {
             public name: string;
             public text: string;
-            public mainField: FieldDefinition;
             public type: FieldTypes = FieldTypes.Multiple;
 
+            public mainField: FieldDefinition;
             public childrenFields: FieldDefinition[];
 
-            //public subQueries: Query[] = [];
-
             constructor(mainField: FieldDefinition, childrenFields: FieldDefinition[]) {
-                this.mainField = mainField;
                 this.name = mainField.name;
                 this.text = mainField.text;
+
+                this.mainField = mainField;
                 this.childrenFields = childrenFields;
-
-                //childrenFields.forEach(field => {
-                //    var query = new Query();
-                //    query.field(field);
-
-                //    this.subQueries.push(query);
-                //});
             }
         }
     }
@@ -127,7 +119,7 @@ module QueryComposer {
         /*
          * Queries of the composition
          */
-        public queries: KnockoutObservableArray<Model.IQuery> = ko.observableArray([]);
+        public queries: KnockoutObservableArray<Model.Query> = ko.observableArray([]);
 
         /*
          * List of fields definition
@@ -147,7 +139,7 @@ module QueryComposer {
                     var query = new Model.Query();
 
                     var fields = this.fieldsDefinition.filter(function (field) {
-                        return true; // TODO: field.name == queries[i].field;
+                        return field.name == queries[i].field;
                     });
 
                     if (fields.length === 1) {
@@ -173,39 +165,104 @@ module QueryComposer {
             }
         }
 
+        changeQueryFieldDefinition(query: Model.Query): void {
+            var index = this.queries.indexOf(query);
+
+            this.queries.valueWillMutate();
+            if (query.field().type != Model.FieldTypes.Multiple) {
+                while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
+                    this.removeQuery(this.queries()[index + 1]);
+                }
+            }
+
+            if (query.field().type == Model.FieldTypes.Multiple) {
+                var field: any = query.field();
+                var multipleFieldsDefinition: Model.MultipleFieldsDefinition = field;
+
+                this.queries.valueWillMutate();
+                var fieldIndex = 1;
+                multipleFieldsDefinition.childrenFields.forEach(childField => {
+                    var query = new Model.Query();
+                    query.operator("&&");
+                    query.field(childField);
+                    query.dependantQuery = true;
+
+                    this.queries.splice(index + fieldIndex, 0, query);
+                    fieldIndex++;
+                });
+            }
+
+            this.queries.valueHasMutated();
+        }
+
         addQuery(): void {
-            this.queries.push({});
+            this.queries.push(new Model.Query());
         }
 
         removeQuery(query: Model.Query): void {
+            var index = this.queries.indexOf(query);
+
+            this.queries.valueWillMutate();
+            if (query.field().type = Model.FieldTypes.Multiple) {
+                while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
+                    this.removeQuery(this.queries()[index + 1]);
+                }
+            }
+
             this.queries.remove(query);
+
+            this.queries.valueHasMutated();
         }
 
         goUp(query: Model.Query): void {
-            var currentIndex = this.queries.indexOf(query);
-            var targetIndex = currentIndex - 1;
-
-            if (targetIndex < 0) return;
-
-            var currentElement = this.queries()[targetIndex];
-
             this.queries.valueWillMutate();
-            this.queries()[currentIndex] = currentElement;
-            this.queries()[targetIndex] = query;
+
+            var queriesToMove: Model.Query[] = [];
+            var startIndex = this.queries.indexOf(query);
+            queriesToMove.push(this.queries.splice(startIndex, 1)[0]);
+
+            if (query.field() && query.field().type == Model.FieldTypes.Multiple) {
+                while (this.queries()[startIndex] && this.queries()[startIndex].dependantQuery) {
+                    queriesToMove.push(this.queries.splice(startIndex, 1)[0]);
+                }
+            }
+
+            var targetIndex = startIndex - 1;
+            while (this.queries()[targetIndex] && this.queries()[targetIndex].dependantQuery) {
+                targetIndex--;
+            }
+
+            queriesToMove.forEach(query => {
+                this.queries.splice(targetIndex, 0, query);
+                targetIndex++;
+            });
+
             this.queries.valueHasMutated();
         }
 
         goDown(query: Model.Query): void {
-            var currentIndex = this.queries.indexOf(query);
-            var targetIndex = currentIndex + 1;
-
-            if (targetIndex >= this.queries().length) return;
-
-            var currentElement = this.queries()[targetIndex];
-
             this.queries.valueWillMutate();
-            this.queries()[currentIndex] = currentElement;
-            this.queries()[targetIndex] = query;
+
+            var queriesToMove: Model.Query[] = [];
+            var startIndex = this.queries.indexOf(query);
+            queriesToMove.push(this.queries.splice(startIndex, 1)[0]);
+
+            if (query.field() && query.field().type == Model.FieldTypes.Multiple) {
+                while (this.queries()[startIndex] && this.queries()[startIndex].dependantQuery) {
+                    queriesToMove.push(this.queries.splice(startIndex, 1)[0]);
+                }
+            }
+
+            var targetIndex = startIndex + 1;
+            while (this.queries()[targetIndex] && this.queries()[targetIndex].dependantQuery) {
+                targetIndex++;
+            }
+
+            queriesToMove.forEach(query => {
+                this.queries.splice(targetIndex, 0, query);
+                targetIndex++;
+            });
+
             this.queries.valueHasMutated();
         }
     }

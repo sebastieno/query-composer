@@ -30,6 +30,7 @@ var QueryComposer;
                 * Operator between this query and the previous one
                 */
                 this.operator = ko.observable("");
+                this.dependantQuery = false;
             }
             return Query;
         })();
@@ -77,21 +78,16 @@ var QueryComposer;
         Model.ListFieldDefinition = ListFieldDefinition;
 
         /*
-        * Model representing a field composed of a main field, and some childs fields
+        * Model representing a multiple fields definition
         */
         var MultipleFieldsDefinition = (function () {
-            //public subQueries: Query[] = [];
             function MultipleFieldsDefinition(mainField, childrenFields) {
                 this.type = 2 /* Multiple */;
-                this.mainField = mainField;
                 this.name = mainField.name;
                 this.text = mainField.text;
+
+                this.mainField = mainField;
                 this.childrenFields = childrenFields;
-                //childrenFields.forEach(field => {
-                //    var query = new Query();
-                //    query.field(field);
-                //    this.subQueries.push(query);
-                //});
             }
             return MultipleFieldsDefinition;
         })();
@@ -126,7 +122,7 @@ var QueryComposer;
                     var query = new Model.Query();
 
                     var fields = this.fieldsDefinition.filter(function (field) {
-                        return true;
+                        return field.name == queries[i].field;
                     });
 
                     if (fields.length === 1) {
@@ -151,41 +147,107 @@ var QueryComposer;
                 this.addQuery();
             }
         }
+        QueriesViewModel.prototype.changeQueryFieldDefinition = function (query) {
+            var _this = this;
+            var index = this.queries.indexOf(query);
+
+            this.queries.valueWillMutate();
+            if (query.field().type != 2 /* Multiple */) {
+                while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
+                    this.removeQuery(this.queries()[index + 1]);
+                }
+            }
+
+            if (query.field().type == 2 /* Multiple */) {
+                var field = query.field();
+                var multipleFieldsDefinition = field;
+
+                this.queries.valueWillMutate();
+                var fieldIndex = 1;
+                multipleFieldsDefinition.childrenFields.forEach(function (childField) {
+                    var query = new Model.Query();
+                    query.operator("&&");
+                    query.field(childField);
+                    query.dependantQuery = true;
+
+                    _this.queries.splice(index + fieldIndex, 0, query);
+                    fieldIndex++;
+                });
+            }
+
+            this.queries.valueHasMutated();
+        };
+
         QueriesViewModel.prototype.addQuery = function () {
-            this.queries.push({});
+            this.queries.push(new Model.Query());
         };
 
         QueriesViewModel.prototype.removeQuery = function (query) {
+            var index = this.queries.indexOf(query);
+
+            this.queries.valueWillMutate();
+            if (query.field().type = 2 /* Multiple */) {
+                while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
+                    this.removeQuery(this.queries()[index + 1]);
+                }
+            }
+
             this.queries.remove(query);
+
+            this.queries.valueHasMutated();
         };
 
         QueriesViewModel.prototype.goUp = function (query) {
-            var currentIndex = this.queries.indexOf(query);
-            var targetIndex = currentIndex - 1;
-
-            if (targetIndex < 0)
-                return;
-
-            var currentElement = this.queries()[targetIndex];
-
+            var _this = this;
             this.queries.valueWillMutate();
-            this.queries()[currentIndex] = currentElement;
-            this.queries()[targetIndex] = query;
+
+            var queriesToMove = [];
+            var startIndex = this.queries.indexOf(query);
+            queriesToMove.push(this.queries.splice(startIndex, 1)[0]);
+
+            if (query.field() && query.field().type == 2 /* Multiple */) {
+                while (this.queries()[startIndex] && this.queries()[startIndex].dependantQuery) {
+                    queriesToMove.push(this.queries.splice(startIndex, 1)[0]);
+                }
+            }
+
+            var targetIndex = startIndex - 1;
+            while (this.queries()[targetIndex] && this.queries()[targetIndex].dependantQuery) {
+                targetIndex--;
+            }
+
+            queriesToMove.forEach(function (query) {
+                _this.queries.splice(targetIndex, 0, query);
+                targetIndex++;
+            });
+
             this.queries.valueHasMutated();
         };
 
         QueriesViewModel.prototype.goDown = function (query) {
-            var currentIndex = this.queries.indexOf(query);
-            var targetIndex = currentIndex + 1;
-
-            if (targetIndex >= this.queries().length)
-                return;
-
-            var currentElement = this.queries()[targetIndex];
-
+            var _this = this;
             this.queries.valueWillMutate();
-            this.queries()[currentIndex] = currentElement;
-            this.queries()[targetIndex] = query;
+
+            var queriesToMove = [];
+            var startIndex = this.queries.indexOf(query);
+            queriesToMove.push(this.queries.splice(startIndex, 1)[0]);
+
+            if (query.field() && query.field().type == 2 /* Multiple */) {
+                while (this.queries()[startIndex] && this.queries()[startIndex].dependantQuery) {
+                    queriesToMove.push(this.queries.splice(startIndex, 1)[0]);
+                }
+            }
+
+            var targetIndex = startIndex + 1;
+            while (this.queries()[targetIndex] && this.queries()[targetIndex].dependantQuery) {
+                targetIndex++;
+            }
+
+            queriesToMove.forEach(function (query) {
+                _this.queries.splice(targetIndex, 0, query);
+                targetIndex++;
+            });
+
             this.queries.valueHasMutated();
         };
         return QueriesViewModel;

@@ -9,12 +9,6 @@
         padding: 2px 105px 2px 4px;
         border-left: 1px solid black;
 
-        &:first-child {
-            .query-field-type {
-                margin-left: 54px;
-            }
-        }
-
         &.or {
             border-left: none;
 
@@ -27,17 +21,30 @@
         .query-field-operator {
             height: @inputHeight;
             width: 50px;
+
+            &.dependant {
+                margin-left: 56px;
+            }
         }
 
         .query-field-type {
             height: @inputHeight;
             width: 250px;
             margin-left: 0;
+
+            &.dependant {
+                width: 194px;
+            }
         }
 
         .query-field-value {
             height: @inputHeight;
             width: 50%;
+        }
+
+        .dependant {
+            display: inline-block;
+            padding-left: 5px;
         }
     }
 
@@ -45,4 +52,3 @@
         float: right;
     }
 }
-
