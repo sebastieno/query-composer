@@ -33,6 +33,8 @@ module QueryComposer {
 
 
             public dependantQuery: boolean = false;
+
+            public collapsed: KnockoutObservable<boolean> = ko.observable(true);
         }
 
         /**
@@ -262,6 +264,21 @@ module QueryComposer {
                 this.queries.splice(targetIndex, 0, query);
                 targetIndex++;
             });
+
+            this.queries.valueHasMutated();
+        }
+
+        toggleCollapse(query: Model.Query): void {
+            var index = this.queries.indexOf(query);
+            query.collapsed(!query.collapsed());
+            this.queries.valueWillMutate();
+
+            if (query.field().type == Model.FieldTypes.Multiple) {
+                while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
+                    this.queries()[index + 1].collapsed(query.collapsed());
+                    index = index + 1;
+                }
+            }
 
             this.queries.valueHasMutated();
         }

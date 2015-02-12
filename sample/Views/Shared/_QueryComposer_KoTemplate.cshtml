@@ -1,6 +1,8 @@
 ﻿<script type="text/html" id="queryComposerTemplate">
     <ul data-bind="foreach: queries" class="queries">
         <li class="query" data-bind="css: { or: operator() === '||', and: operator() === '&&' }">
+            <!-- ko if: !dependantQuery || !collapsed() -->
+
             <!-- ko if: !dependantQuery-->
             <select class="query-field-operator" data-bind="options: $parent.operators,
                 optionsText: 'name',
@@ -65,6 +67,19 @@
             <button type="button" class="query-btn" data-bind="click: function() { $parent.goDown($data); }, disable: $index() >= ($parent.queries().length - 1)">
                 down
             </button>
+            <!-- /ko -->
+
+            <!-- ko if: field() && field().type == QueryComposer.Model.FieldTypes.Multiple -->
+            <br />
+            <button type="button" class="query-btn" data-bind="click: function() { $parent.toggleCollapse($data); }, visible: collapsed()">
+                +
+            </button>
+            <button type="button" class="query-btn" data-bind="click: function() { $parent.toggleCollapse($data);$parent.recomputeResume($data); }, visible: !collapsed()" style="position: absolute;">
+                -
+            </button>
+            <span data-bind="text: resume(), visible: collapsed()"></span>
+            <!-- /ko -->
+
             <!-- /ko -->
         </li>
     </ul>
