@@ -71,12 +71,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FieldDefinitionBuilder.cs" />
-    <Compile Include="Model\FieldDefinition.cs" />
+    <Compile Include="Model\FieldDefinitionTypes.cs" />
+    <Compile Include="Model\IFieldDefinition.cs" />
+    <Compile Include="Model\IFieldsContainer.cs" />
+    <Compile Include="Model\ListFieldDefinition.cs" />
+    <Compile Include="Model\MultipleFieldDefinition.cs" />
     <Compile Include="Model\Query.cs" />
     <Compile Include="Model\QueryCompositionModel.cs" />
+    <Compile Include="Model\TextFieldDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryableHelper.cs" />
     <Compile Include="QueryComposer.cs" />
+    <Compile Include="QueryComposerConfiguration.cs" />
     <Compile Include="QueryComposerMvcHelper.cs" />
   </ItemGroup>
   <ItemGroup>

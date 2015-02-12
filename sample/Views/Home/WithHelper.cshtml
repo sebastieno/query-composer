@@ -1,68 +1,76 @@
-﻿@*@{
-    Layout = "~/Views/Shared/_MainLayout.cshtml";
-    ViewBag.Title = "Query Sample With Helper";
+﻿﻿@model SampleApp.Models.IndexModel
+@using QueryComposer.MvcHelper
+@using QueryComposer.MvcHelper.Model
+
+
+@{
+    var yesNoList = new[] {
+        new { Text = "Oui", Value = true },
+        new { Text = "Non", Value = false }
+    };
+
+    var competencesList = new[] {
+        new { Text = "Parle anglais", Value = 1 },
+        new { Text = "Autonome", Value = 2 },
+        new { Text = "Notions suite Office", Value = 3 },
+        new { Text = "Orthographe", Value = 4 }
+    };
+
+    var niveauxList = new[] {
+        new { Text = "Non", Value = 0 },
+        new { Text = "Moyen", Value = 1 },
+        new { Text = "Oui", Value = 2 }
+    };
 }
 
-<div class="col-xs-12 main-container fixed-menu">
-    <section id="menu" role="menu">
-        @Html.Partial("_Menu")
-    </section>
+@Scripts.Render("~/bundles/jquery")
+@Html.Partial("_QueryComposer_KoTemplate")
 
+<div class="col-xs-12 main-container fixed-menu">
     <section role="main" id="main">
         <form id="sampleForm">
-            @(Html.QueryComponent("samplequery")
-                .Fields(builder =>
-                {
-                    builder.AddTextField("CodePostal", "Code postal");
-                    builder.AddListField("Diplomes", "Diplômes", new SelectList(new List<SelectListItem>
-                        {
-                            new SelectListItem { Value= "0", Text= "Brevet" },
-                            new SelectListItem { Value= "1", Text= "Bac"},
-                            new SelectListItem { Value= "2", Text= "Bac +2"},
-                            new SelectListItem { Value= "3", Text= "Bac +5"}
-                        }, "Value", "Text"));
-                    builder.AddListField("Competences", "Compétences", new SelectList(new List<SelectListItem>
-                        {
-                            new SelectListItem { Value= "0", Text= "Parle anglais"},
-                            new SelectListItem { Value= "1", Text= "Autonome"},
-                            new SelectListItem { Value= "2", Text= "Notion office"}
-                         }, "Value", "Text"));
-                })
-                .Data(new List<QueryModel>
-                {
-                    new QueryModel { Field = "Diplomes", Operator = "&&", Value = "2" },
-                    new QueryModel { Field = "CodePostal", Operator = "&&", Value = "75015" },
-                    new QueryModel { Field = "Diplomes", Operator = "||", Value = "0" },
-                    new QueryModel { Field = "Competences", Operator = "&&", Value = "0" },
-                    new QueryModel { Field = "Competences", Operator = "&&", Value = "1" },
-                })
-                .Render())
+            <h3>Critères de recherche :</h3>
 
-            <input type="submit" value="toJSON" />
-            <input type="submit" value="httpGet" />
-            <input type="submit" value="httpPost" />
+            @(Html.QueryComposer("samplequery", new QueryComposerConfiguration { ShowNewEmptyLine = true })
+                .Fields(builder =>
+            {
+                builder.AddTextField("Title", "Titre de l'itération");
+                builder.AddListField("StatusId", "Statut", new SelectList(Model.Statuses, "Id", "Name"));
+                builder.AddListField("IterationId", "Itération", new SelectList(Model.Iterations, "Id", "Name"));
+                builder.AddListField("AreaId", "Zone", new SelectList(Model.Areas, "Id", "Name"));
+                builder.AddMultipleField("Competence", "Compétence", new SelectList(competencesList, "Value", "Text"), fieldBuilder =>
+                    {
+                        fieldBuilder.AddListField("Iteration.Current", "Niveau minimum", new SelectList(niveauxList, "Value", "Text"));
+                        fieldBuilder.AddTextField("StartDate", "Date de début");
+                        fieldBuilder.AddTextField("EndDate", "Date de fin");
+                    });
+            })
+            .Data(new List<Query>()
+            {
+                new Query { Field = "Title", Operator = "&&", Value = "Mon titre" },
+                new Query { Field = "StatusId", Operator = "||", Value = "4" }
+            })
+            .Render())
+
+            <br />
+            <input type="submit" value="Rechercher" />
         </form>
 
-        <div id="response"></div>
+        <div id="response">
+        </div>
 
         <script type="text/javascript">
             $("#sampleForm").submit(function (e) {
                 e.preventDefault();
 
-                var btn = $(this).find("input[type=submit]:focus")[0];
-
-                if (btn.value === "toJSON") {
-                    $("#response").html(JSON.stringify($(this).serializeArray()));
-                } else if (btn.value === "httpGet") {
-                    $.get("@Url.Action("WithHelper")", $(this).serializeArray());
-                }
-                else if (btn.value === "httpPost") {
-                    $.post("@Url.Action("PostWithHelper")", $(this).serialize());
-                }
+                $.post("@Url.Action("Index")", $(this).serialize())
+                .done(function (data) {
+                    $("#response").html(data);
+                })
+                .error(function (e) {
+                    alert("Aïe, une erreur est survenue :( !\n\nMessage:\n" + e.responseJSON.message);
+                });
             });
         </script>
     </section>
 </div>
-
-@Scripts.Render("~/bundles/querycomponent")
-@Html.Partial("_QueryComponent")*@

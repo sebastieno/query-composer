@@ -8,7 +8,7 @@
         /// <summary>
         /// Type of the query
         /// </summary>
-        public FieldDefinition.Types Type { get; set; }
+        public FieldDefinitionTypes Type { get; set; }
 
         /// <summary>
         /// Field used for the query

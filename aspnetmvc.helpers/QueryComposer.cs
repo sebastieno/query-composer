@@ -1,4 +1,4 @@
-﻿using QueryComposer.MvcHelper.Model;
+﻿﻿using QueryComposer.MvcHelper.Model;
 using System.Collections.Generic;
 
 namespace QueryComposer.MvcHelper
@@ -6,7 +6,7 @@ namespace QueryComposer.MvcHelper
     /// <summary>
     /// Model representing a query composer component
     /// </summary>
-    public class QueryComposer
+    public class QueryComposer : IFieldsContainer
     {
         /// <summary>
         /// Name of the component instance
@@ -22,5 +22,10 @@ namespace QueryComposer.MvcHelper
         /// Current queries of the query composer component
         /// </summary>
         public IEnumerable<Query> Queries { get; internal set; }
+
+        /// <summary>
+        /// Configuration of the query composer component
+        /// </summary>
+        public QueryComposerConfiguration Configuration { get; internal set; }
     }
 }

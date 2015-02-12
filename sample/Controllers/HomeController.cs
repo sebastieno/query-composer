@@ -51,9 +51,18 @@ namespace SampleApp.Controllers
             }
         }
 
-        public ActionResult WithHelper(QueryCompositionModel model)
+        public async Task<ActionResult> WithHelper()
         {
-            return View();
+            using (var context = new Data.SampleDatabaseEntities())
+            {
+                var model = new IndexModel();
+
+                model.Areas = await context.Areas.ToListAsync();
+                model.Iterations = await context.Iterations.ToListAsync();
+                model.Statuses = await context.Status.ToListAsync();
+
+                return View(model);
+            }
         }
 
         [HttpPost]

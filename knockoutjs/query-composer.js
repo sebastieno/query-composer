@@ -152,13 +152,13 @@ var QueryComposer;
             var index = this.queries.indexOf(query);
 
             this.queries.valueWillMutate();
-            if (query.field().type != 2 /* Multiple */) {
+            if (!query.field() || query.field().type != 2 /* Multiple */) {
                 while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
                     this.removeQuery(this.queries()[index + 1]);
                 }
             }
 
-            if (query.field().type == 2 /* Multiple */) {
+            if (query.field() && query.field().type == 2 /* Multiple */) {
                 var field = query.field();
                 var multipleFieldsDefinition = field;
 
@@ -186,7 +186,7 @@ var QueryComposer;
             var index = this.queries.indexOf(query);
 
             this.queries.valueWillMutate();
-            if (query.field().type = 2 /* Multiple */) {
+            if (query.field().type == 2 /* Multiple */) {
                 while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
                     this.removeQuery(this.queries()[index + 1]);
                 }

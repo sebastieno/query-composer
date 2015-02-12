@@ -169,13 +169,13 @@ module QueryComposer {
             var index = this.queries.indexOf(query);
 
             this.queries.valueWillMutate();
-            if (query.field().type != Model.FieldTypes.Multiple) {
+            if (!query.field() || query.field().type != Model.FieldTypes.Multiple) {
                 while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
                     this.removeQuery(this.queries()[index + 1]);
                 }
             }
 
-            if (query.field().type == Model.FieldTypes.Multiple) {
+            if (query.field() && query.field().type == Model.FieldTypes.Multiple) {
                 var field: any = query.field();
                 var multipleFieldsDefinition: Model.MultipleFieldsDefinition = field;
 
@@ -203,7 +203,7 @@ module QueryComposer {
             var index = this.queries.indexOf(query);
 
             this.queries.valueWillMutate();
-            if (query.field().type = Model.FieldTypes.Multiple) {
+            if (query.field().type == Model.FieldTypes.Multiple) {
                 while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
                     this.removeQuery(this.queries()[index + 1]);
                 }

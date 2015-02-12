@@ -8,9 +8,8 @@
                 optionsValue: 'value'"></select>
             <!-- /ko -->
             <!-- ko if: dependantQuery-->
-            <span class="query-field-operator dependant">ET</span>
+            <span class="query-field-operator dependant">&nbsp;</span>
             <!-- /ko -->
-
             <!-- ko if: !dependantQuery-->
             <select class="query-field-type" data-bind="options: $parent.fieldsDefinition,
                         optionsText: 'text',
@@ -21,17 +20,17 @@
             <!-- ko if: dependantQuery-->
             <span class="query-field-type dependant" data-bind="text: field().text"></span>
             <!-- /ko -->
-
             <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].type' }, value: field() ? field().type : ''" />
             <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].field' }, value: field() ? field().name : ''" />
             <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].value' }, value: value" />
             <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].operator' }, value: operator" />
 
-            <span data-bind="if: field() && (field().type == QueryComposer.Model.FieldTypes.Text || (field().type == QueryComposer.Model.FieldTypes.Multiple && field().mainField.type == QueryComposer.Model.FieldTypes.Text))">
+            <!-- ko if: field() && field().type != QueryComposer.Model.FieldTypes.Multiple-->
+            <span data-bind="if: field().type == QueryComposer.Model.FieldTypes.Text">
                 =
                 <input class="query-field-value" type="text" data-bind="value: value" />
             </span>
-            <span data-bind="if: field() && (field().type == QueryComposer.Model.FieldTypes.List || (field().type == QueryComposer.Model.FieldTypes.Multiple && field().mainField.type == QueryComposer.Model.FieldTypes.List))">
+            <span data-bind="if: field().type == QueryComposer.Model.FieldTypes.List">
                 =
                 <select class="query-field-value" data-bind="options: field().values,
                        optionsText: 'text',
@@ -39,7 +38,21 @@
                        value: value,
                        optionsCaption: 'Sélectionnez une valeur...'"></select>
             </span>
-
+            <!-- /ko -->
+            <!-- ko if: field() && field().type == QueryComposer.Model.FieldTypes.Multiple-->
+            <span data-bind="if: field().mainField && field().mainField.type == QueryComposer.Model.FieldTypes.Text">
+                =
+                <input class="query-field-value" type="text" data-bind="value: value" />
+            </span>
+            <span data-bind="if: field().mainField && field().mainField.type == QueryComposer.Model.FieldTypes.List">
+                =
+                <select class="query-field-value" data-bind="options: field().mainField.values,
+                       optionsText: 'text',
+                       optionsValue: 'value',
+                       value: value,
+                       optionsCaption: 'Sélectionnez une valeur...'"></select>
+            </span>
+            <!-- /ko -->
             <!-- ko if: !dependantQuery-->
             <button type="button" class="query-btn" data-bind="click: function() { $parent.removeQuery($data); }">
                 x
