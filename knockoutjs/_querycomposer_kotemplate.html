@@ -25,6 +25,7 @@
             <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].field' }, value: field() ? field().name : ''" />
             <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].value' }, value: value" />
             <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].operator' }, value: operator" />
+            <input type="hidden" data-bind="attr : { name: 'queries[' + $index() + '].isDependant' }, value: dependantQuery" />
 
             <!-- ko if: field() && field().type != QueryComposer.Model.FieldTypes.Multiple-->
             <span data-bind="if: field().type == QueryComposer.Model.FieldTypes.Text">
@@ -56,24 +57,24 @@
             <!-- /ko -->
             <!-- ko if: !dependantQuery-->
             <button type="button" class="query-btn" data-bind="click: function() { $parent.removeQuery($data); }">
-                x
+                <span class="glyphicon glyphicon-remove"></span>
             </button>
 
             <button type="button" class="query-btn" data-bind="click: function() { $parent.goUp($data); }, enable: $index() != 0">
-                up
+                <span class="glyphicon glyphicon-chevron-up"></span>
             </button>
 
             <button type="button" class="query-btn" data-bind="click: function() { $parent.goDown($data); }, disable: $index() >= ($parent.queries().length - 1)">
-                down
+                <span class="glyphicon glyphicon-chevron-down"></span>
             </button>
             <!-- /ko -->
             <!-- ko if: field() && field().type == QueryComposer.Model.FieldTypes.Multiple -->
             <br />
-            <button type="button" class="query-btn" data-bind="click: function() { $parent.toggleCollapse($data); }, visible: collapsed()">
-                +
+            <button type="button" class="query-minibtn" data-bind="click: function() { $parent.toggleCollapse($data); }, visible: collapsed()">
+                <span class="glyphicon glyphicon-plus"></span>
             </button>
-            <button type="button" class="query-btn" data-bind="click: function() { $parent.toggleCollapse($data);$parent.recomputeResume($data); }, visible: !collapsed()" style="position: absolute;">
-                -
+            <button type="button" class="query-minibtn" data-bind="click: function() { $parent.toggleCollapse($data);$parent.recomputeResume($data); }, visible: !collapsed()">
+                <span class="glyphicon glyphicon-minus"></span>
             </button>
             <span data-bind="text: resume(), visible: collapsed()"></span>
             <!-- /ko -->

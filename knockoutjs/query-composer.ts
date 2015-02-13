@@ -162,23 +162,30 @@ module QueryComposer {
                         if (query.field().type == Model.FieldTypes.Multiple) {
                             var multipleField: Model.MultipleFieldsDefinition = <Model.MultipleFieldsDefinition>query.field();
                             // Gets the sub queries
-                            for (var j = 0; j < multipleField.childrenFields.length; j++) {
-                                i++;
+                            var subQueries = [];
 
-                                var subFields = multipleField.childrenFields.filter(function (field) {
-                                    return field.name == queries[i].field;
+                            i++;
+                            while (queries[i] && queries[i].isDependant) {
+                                subQueries.push(queries[i]);
+                                i++;
+                            }
+
+                            multipleField.childrenFields.forEach(childField => {
+                                var query = new Model.Query();
+                                query.operator("&&");
+                                query.field(childField);
+                                query.dependantQuery = true;
+
+                                var correspondingSubQueries = subQueries.filter(q => {
+                                    return query.field().name == q.field;
                                 });
 
-                                if (subFields.length === 1) {
-                                    var subQuery = new Model.Query();
-                                    subQuery.operator("&&");
-                                    subQuery.field(subFields[0]);
-                                    subQuery.value(queries[i].value);
-                                    subQuery.dependantQuery = true;
-
-                                    this.queries.push(subQuery);
+                                if (correspondingSubQueries.length == 1) {
+                                    query.value(correspondingSubQueries[0].value)
                                 }
-                            }
+                                    
+                                this.queries.push(query);
+                            });
 
                             this.recomputeResume(query);
                         }

@@ -24,5 +24,10 @@
         /// Operator between this query and the previous one
         /// </summary>
         public string Operator { get; set; }
+
+        /// <summary>
+        /// Boolean which indicates if this query is dependant on an other query
+        /// </summary>
+        public bool IsDependant { get; set; }
     }
 }

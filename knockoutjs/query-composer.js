@@ -99,6 +99,7 @@ var QueryComposer;
      */
     var QueriesViewModel = (function () {
         function QueriesViewModel(fieldsDefinition, configuration, queries) {
+            var _this = this;
             /*
              * Queries of the composition
              */
@@ -126,20 +127,26 @@ var QueryComposer;
                         this.queries.push(query);
                         if (query.field().type == 2 /* Multiple */) {
                             var multipleField = query.field();
-                            for (var j = 0; j < multipleField.childrenFields.length; j++) {
+                            // Gets the sub queries
+                            var subQueries = [];
+                            i++;
+                            while (queries[i] && queries[i].isDependant) {
+                                subQueries.push(queries[i]);
                                 i++;
-                                var subFields = multipleField.childrenFields.filter(function (field) {
-                                    return field.name == queries[i].field;
-                                });
-                                if (subFields.length === 1) {
-                                    var subQuery = new Model.Query();
-                                    subQuery.operator("&&");
-                                    subQuery.field(subFields[0]);
-                                    subQuery.value(queries[i].value);
-                                    subQuery.dependantQuery = true;
-                                    this.queries.push(subQuery);
-                                }
                             }
+                            multipleField.childrenFields.forEach(function (childField) {
+                                var query = new Model.Query();
+                                query.operator("&&");
+                                query.field(childField);
+                                query.dependantQuery = true;
+                                var correspondingSubQueries = subQueries.filter(function (q) {
+                                    return query.field().name == q.field;
+                                });
+                                if (correspondingSubQueries.length == 1) {
+                                    query.value(correspondingSubQueries[0].value);
+                                }
+                                _this.queries.push(query);
+                            });
                             this.recomputeResume(query);
                         }
                     }

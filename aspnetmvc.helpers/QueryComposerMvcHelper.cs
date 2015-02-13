@@ -91,6 +91,7 @@ namespace QueryComposer.MvcHelper
 
                     jsBuilder.Append("field: '" + query.Field + "'");
                     jsBuilder.Append(", value: '" + query.Value + "'");
+                    jsBuilder.Append(", isDependant: " + query.IsDependant.ToString().ToLowerInvariant());
                     jsBuilder.Append(", operator: '" + query.Operator + "'},");
                 }
 
