@@ -48,7 +48,12 @@
             .Data(new List<Query>()
             {
                 new Query { Field = "Title", Operator = "&&", Value = "Mon titre" },
-                new Query { Field = "StatusId", Operator = "||", Value = "4" }
+                new Query { Field = "StatusId", Operator = "||", Value = "4" },
+                new Query { Field = "Competence", Operator = "&&", Value = "4" },
+                new Query { Field = "Iteration.Current", Value = "1" },
+                new Query { Field = "StartDate", Value = "01/01/2004" },
+                new Query { Field = "EndDate", Value = "01/01/2016" },
+                new Query { Field = "StatusId", Operator = "||", Value = "4" },
             })
             .Render())
 

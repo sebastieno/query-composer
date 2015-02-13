@@ -69,14 +69,15 @@
             </button>
             <!-- /ko -->
 
-            <!-- ko if: field() && field().type == QueryComposer.Model.FieldTypes.Multiple && collapsed() -->
+            <!-- ko if: field() && field().type == QueryComposer.Model.FieldTypes.Multiple -->
             <br />
             <button type="button" class="query-btn" data-bind="click: function() { $parent.toggleCollapse($data); }, visible: collapsed()">
                 +
             </button>
-            <button type="button" class="query-btn" data-bind="click: function() { $parent.toggleCollapse($data); }, visible: !collapsed()">
+            <button type="button" class="query-btn" data-bind="click: function() { $parent.toggleCollapse($data);$parent.recomputeResume($data); }, visible: !collapsed()" style="position: absolute;">
                 -
             </button>
+            <span data-bind="text: resume(), visible: collapsed()"></span>
             <!-- /ko -->
 
             <!-- /ko -->

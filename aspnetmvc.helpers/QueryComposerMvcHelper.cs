@@ -38,6 +38,19 @@ namespace QueryComposer.MvcHelper
         }
 
         /// <summary>
+        /// Defines fields available in the query composer, for each query
+        /// </summary>
+        /// <param name="component">QueryComposer instance</param>
+        /// <param name="fields">List of query fields</param>
+        /// <returns>The query composer instance</returns>
+        public static QueryComposer Fields(this QueryComposer component, List<FieldDefinition> fields)
+        {
+            component.Fields = fields;
+
+            return component;
+        }
+
+        /// <summary>
         /// Defines current queries of the query composer
         /// </summary>
         /// <param name="component">QueryComposer instance</param>

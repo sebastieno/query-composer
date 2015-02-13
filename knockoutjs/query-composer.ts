@@ -35,6 +35,8 @@ module QueryComposer {
             public dependantQuery: boolean = false;
 
             public collapsed: KnockoutObservable<boolean> = ko.observable(true);
+
+            public resume: KnockoutObservable<string> = ko.observable("");
         }
 
         /**
@@ -205,7 +207,7 @@ module QueryComposer {
             var index = this.queries.indexOf(query);
 
             this.queries.valueWillMutate();
-            if (query.field().type == Model.FieldTypes.Multiple) {
+            if (query.field() && query.field().type == Model.FieldTypes.Multiple) {
                 while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
                     this.removeQuery(this.queries()[index + 1]);
                 }
@@ -281,6 +283,36 @@ module QueryComposer {
             }
 
             this.queries.valueHasMutated();
+        }
+
+        recomputeResume(query: Model.Query): void {
+            var index = this.queries.indexOf(query) + 1;
+
+            var resume: string[] = [];
+
+            if (query.field().type == Model.FieldTypes.Multiple) {
+                while (this.queries()[index] && this.queries()[index].dependantQuery) {
+                    var queryToResume = this.queries()[index];
+                    if (queryToResume.value()) {
+                        if (queryToResume.field().type == Model.FieldTypes.List) {
+                            var untypedlistField: any = queryToResume.field();
+                            var listField: Model.ListFieldDefinition = untypedlistField;
+                            for (var i = 0; i < listField.values.length; i++) {
+                                if (listField.values[i].value == parseInt(queryToResume.value())) {
+                                    resume.push(" " + queryToResume.field().text + ": " + listField.values[i].text);
+                                    break;
+                                }
+                            }
+                        } else {
+                            resume.push(" " + queryToResume.field().text + ": " + queryToResume.value());
+                        }
+                    }
+
+                    index = index + 1;
+                }
+            }
+
+            query.resume(resume.join(','));
         }
     }
 }

@@ -32,6 +32,7 @@ var QueryComposer;
                 this.operator = ko.observable("");
                 this.dependantQuery = false;
                 this.collapsed = ko.observable(true);
+                this.resume = ko.observable("");
             }
             return Query;
         })();
@@ -164,7 +165,7 @@ var QueryComposer;
         QueriesViewModel.prototype.removeQuery = function (query) {
             var index = this.queries.indexOf(query);
             this.queries.valueWillMutate();
-            if (query.field().type == 2 /* Multiple */) {
+            if (query.field() && query.field().type == 2 /* Multiple */) {
                 while (this.queries()[index + 1] && this.queries()[index + 1].dependantQuery) {
                     this.removeQuery(this.queries()[index + 1]);
                 }
@@ -225,6 +226,32 @@ var QueryComposer;
                 }
             }
             this.queries.valueHasMutated();
+        };
+        QueriesViewModel.prototype.recomputeResume = function (query) {
+            var index = this.queries.indexOf(query) + 1;
+            var resume = [];
+            if (query.field().type == 2 /* Multiple */) {
+                while (this.queries()[index] && this.queries()[index].dependantQuery) {
+                    var queryToResume = this.queries()[index];
+                    if (queryToResume.value()) {
+                        if (queryToResume.field().type == 1 /* List */) {
+                            var untypedlistField = queryToResume.field();
+                            var listField = untypedlistField;
+                            for (var i = 0; i < listField.values.length; i++) {
+                                if (listField.values[i].value == parseInt(queryToResume.value())) {
+                                    resume.push(" " + queryToResume.field().text + ": " + listField.values[i].text);
+                                    break;
+                                }
+                            }
+                        }
+                        else {
+                            resume.push(" " + queryToResume.field().text + ": " + queryToResume.value());
+                        }
+                    }
+                    index = index + 1;
+                }
+            }
+            query.resume(resume.join(','));
         };
         return QueriesViewModel;
     })();
