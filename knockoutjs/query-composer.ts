@@ -158,6 +158,30 @@ module QueryComposer {
                         query.value(queries[i].value);
 
                         this.queries.push(query);
+
+                        if (query.field().type == Model.FieldTypes.Multiple) {
+                            var multipleField: Model.MultipleFieldsDefinition = <Model.MultipleFieldsDefinition>query.field();
+                            // Gets the sub queries
+                            for (var j = 0; j < multipleField.childrenFields.length; j++) {
+                                i++;
+
+                                var subFields = multipleField.childrenFields.filter(function (field) {
+                                    return field.name == queries[i].field;
+                                });
+
+                                if (subFields.length === 1) {
+                                    var subQuery = new Model.Query();
+                                    subQuery.operator("&&");
+                                    subQuery.field(subFields[0]);
+                                    subQuery.value(queries[i].value);
+                                    subQuery.dependantQuery = true;
+
+                                    this.queries.push(subQuery);
+                                }
+                            }
+
+                            this.recomputeResume(query);
+                        }
                     } else {
                         console.warn("The field " + queries[i].field + " cannot be retrieved from the fields definition");
                     }

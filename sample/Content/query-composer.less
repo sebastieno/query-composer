@@ -3,20 +3,31 @@
 .queries {
     list-style: none;
 
-    .query {
-        width: 100%;
-        clear: both;
-        padding: 2px 105px 2px 4px;
-        border-left: 1px solid black;
-
-        &.or {
-            border-left: none;
+    &.mainor {
+        .query.or {
 
             .query-field-operator {
                 margin-left: -30px;
                 margin-right: 31px;
             }
         }
+    }
+
+    &.mainand{
+        .query.and {
+
+            .query-field-operator {
+                margin-left: -30px;
+                margin-right: 31px;
+            }
+        }
+    }
+
+    .query {
+        width: 100%;
+        clear: both;
+        padding: 2px 105px 2px 4px;
+        border-left: 1px solid black;
 
         .query-field-operator {
             height: @inputHeight;
